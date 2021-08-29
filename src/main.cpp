@@ -6,6 +6,8 @@
 #include <math.h>
 #include <cstdio>
 
+#include <windows.h>
+
 using namespace std;
 
 bool is_number(const std::string& s)
@@ -16,6 +18,9 @@ bool is_number(const std::string& s)
 }
 
 int main(int args, char *arg[]) {
+  // Windows only
+  HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+
   bool debtmode = true;
   float owe;
   try
@@ -47,7 +52,7 @@ int main(int args, char *arg[]) {
   std::cout << "You " << (debtmode ? "owe " : "have ") << (debtmode ? owe : owe * -1) << endl;
   std::cout << endl;
   double interest = 0;
-  if (args >= 3 && is_number(arg[2]) && (strlen(arg[2]) == 1 && arg[2][0] != '-')){
+  if (args >= 3 && is_number(arg[2]) && !(strlen(arg[2]) == 1 && arg[2][0] == '-')){
     interest = stod(arg[2], nullptr);
     std::cout << "Your monthly interest rate is " << arg[2] << endl;
   } else {
@@ -72,7 +77,7 @@ int main(int args, char *arg[]) {
 
   string strpayment = "";
   float payment = 0;
-  if (args >= 4 && is_number(arg[3]) && (strlen(arg[3]) == 1 && arg[3][0] != '-')){
+  if (args >= 4 && is_number(arg[3]) && !(strlen(arg[3]) == 1 && arg[3][0] == '-')){
     payment = stod(arg[3], nullptr);
     std::cout << "Your monthly " << (debtmode ? "payment is " : "savings are ") <<  arg[3] << endl;
   } else {
@@ -108,7 +113,12 @@ int main(int args, char *arg[]) {
     currinterest = debt * (interest / 100);
     prevdebt = debt;
     debt = (debt *  (1 + (interest / 100))) - (debtmode ? payment : payment * -1);
-    printf("Month %02d     Interest: %#10.2f$     %s: %#10.2f$     (%+#.2f$) \n", month, currinterest, (debtmode ? "Debt" : "Savings"), debt, debt - prevdebt);
+    // Windows
+    std::printf("Month %02d     Interest: %#10.2f$     %s: %#10.2f$     ", month, currinterest, (debtmode ? "Debt" : "Savings"), debt);
+    if(debt-prevdebt < 0) SetConsoleTextAttribute(hConsole, debtmode ? 10 : 12);
+    else SetConsoleTextAttribute(hConsole, debtmode ? 12 : 10);
+    std::printf("(%+#.2f$) \n",  debt - prevdebt);
+    SetConsoleTextAttribute(hConsole, 15);
 
     if(debt > owe) {
       inflates = true;
@@ -137,11 +147,14 @@ int main(int args, char *arg[]) {
         currinterest = debt * (interest / 100);
         prevdebt = debt;
         debt = (debt *  (1 + (interest / 100))) - (debtmode ? payment : payment * -1);
-        printf("Month %02d     Interest: %#10.2f$     %s: %#10.2f$     (%+#.2f$) \n", i, currinterest, (debtmode ? "Debt" : "Savings"), debt, debt - prevdebt);
+        // Windows
+        std::printf("Month %02d     Interest: %#10.2f$     %s: %#10.2f$     ", i, currinterest, (debtmode ? "Debt" : "Savings"), debt);
+        if(debt-prevdebt < 0) SetConsoleTextAttribute(hConsole, debtmode ? 10 : 12);
+        else SetConsoleTextAttribute(hConsole, debtmode ? 12 : 10);
+        std::printf("(%+#.2f$) \n",  debt - prevdebt);
+        SetConsoleTextAttribute(hConsole, 15);
       }
-
     }
-
   }
 
   totinterest += currinterest;
