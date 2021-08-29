@@ -17,7 +17,7 @@ int main(int args, char *arg[]) {
   }
   catch(const std::exception& e)
   {
-    std::cerr << "Please enter a number as argument for the program." << '\n';
+    std::cerr << "Please open through command line and enter a number as argument for the program." << '\n';
     std::cout << "Press enter to close...";
     //clear buffer, wait for input to close program
     std::cin.clear();
