@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 #include <math.h>
-
+#include <cstdio>
 
 using namespace std;
 
@@ -72,5 +72,10 @@ int main(int args, char *arg[]) {
   printf("Total interest: %#.2f$ \n", totinterest);
   printf("Total %s: %#.2f$ \n\n", (debtmode ? "paid" : "saved"), (inflates ? payment * underpaying : payment * month + debt));
 
+  std::cout << "Press enter to close...";
+  //clear buffer, wait for input to close program
+  std::cin.clear();
+  std::cin.ignore(INT_MAX, '\n');
+  std::cin.get();
   return 0; 
 }
