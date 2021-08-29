@@ -10,22 +10,66 @@ using namespace std;
 
 int main(int args, char *arg[]) {
   bool debtmode = true;
-  float owe = stof(arg[1], nullptr);
+  float owe;
+  try
+  {
+    owe = stof(arg[1], nullptr);
+  }
+  catch(const std::exception& e)
+  {
+    std::cerr << "Please enter a number as argument for the program." << '\n';
+    std::cout << "Press enter to close...";
+    //clear buffer, wait for input to close program
+    std::cin.clear();
+    std::cin.ignore(INT_MAX, '\n');
+    std::cin.get();
+    return 0;
+  }
+  
+
   if(owe <= 0) debtmode = false;
 
   std::cout << "You " << (debtmode ? "owe " : "have ") << (debtmode ? owe : owe * -1) << endl;
   std::cout << endl;
-  string strinterest;
-  std::cout << "What's the monthly interest rate? ";
-  getline(cin, strinterest);
-  double interest = stod(strinterest, nullptr);
+  string strinterest = "";
+  double interest = 0;
+  while(strinterest == ""){
+    std::cout << "What's the monthly interest rate? ";
+    getline(cin, strinterest);
+    if(strinterest != "") {
+      try
+      {
+        interest = stod(strinterest, nullptr);
+      }
+      catch(const std::exception& e)
+      {
+        strinterest = "";
+        std::cerr << "Please enter a number." << endl;
+      }
+    } 
+    else std::cout << "Please enter an interest rate." << endl;
+  }
 
-  string strpayment;
-  std::cout << "How much will you " << (debtmode ? "pay" : "save") << " per month? ";
-  getline(cin, strpayment);
+  string strpayment = "";
+  float payment = 0;
+  while(strpayment == ""){
+    std::cout << "How much will you " << (debtmode ? "pay" : "save") << " per month? ";
+    getline(cin, strpayment);
+    if(strpayment != "") {
+      try
+      {
+        payment = stod(strpayment, nullptr);
+      }
+      catch(const std::exception& e)
+      {
+        strpayment = "";
+        std::cerr << "Please enter a number." << endl;
+      }
+    } 
+    else std::cout << "Please enter your monthly " << (debtmode ? "payment" : "savings") << "." << endl;
+  }
+
   std::cout << endl;
-  float payment = stof(strpayment, nullptr);
-
   int month = 0;
   int underpaying;
   float debt = (debtmode ? owe : owe * -1);
